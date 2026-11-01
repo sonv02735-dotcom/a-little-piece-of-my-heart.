@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Little Piece of My Heart ❤️</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #050b18;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  color: white;
+  font-family: Arial;
+}
+
+h2 {
+  color: #ffb6c1;
+  font-family: cursive;
+  text-align: center;
+  font-weight: normal;
+}
+
+canvas {
+  width: 100%;
+  max-width: 600px;
+}
+
+button {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 30px;
+  background: #ffb6c1;
+  color: #401326;
+  font-size: 18px;
+  box-shadow: 0 0 20px #ff69b4;
+  margin: 12px;
+}
+
+#player {
+  width: 280px;
+  max-width: 90vw;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 12px;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<h2>A Little Piece of My Heart ❤️</h2>
+
+<button id="start">Start ❤️</button>
+
+<canvas id="heart" width="600" height="600"></canvas>
+
+<iframe
+  id="player"
+  title="Can't Help Falling in Love - Elvis Presley"
+  allow="autoplay; encrypted-media; picture-in-picture"
+  allowfullscreen>
+</iframe>
+
+<script>
+const canvas = document.getElementById("heart");
+const ctx = canvas.getContext("2d");
+
+const points = [];
+
+for (let i = 0; i < 120; i++) {
+  let a = i * Math.PI * 2 / 120;
+
+  let x = 16 * Math.sin(a) ** 3;
+  let y = 13 * Math.cos(a)
+    - 5 * Math.cos(2*a)
+    - 2 * Math.cos(3*a)
+    - Math.cos(4*a);
+
+  points.push({x, y});
+}
+
+let startTime = 0;
+let running = false;
+
+function animate(now) {
+  if (!running) return;
+
+  ctx.clearRect(0, 0, 600, 600);
+
+  let elapsed = (now - startTime) / 1000;
+  let progress = Math.min(elapsed / 5, 1);
+
+  let pulse = elapsed < 5
+    ? 1
+    : 1 + Math.sin(elapsed * 4) * 0.045;
+
+  ctx.save();
+  ctx.translate(300, 300);
+  ctx.scale(pulse, pulse);
+
+  let count = Math.floor(progress * 120);
+
+  for (let i = 0; i < count; i++) {
+    let p = points[i];
+
+    let x = p.x * 14;
+    let y = -p.y * 14;
+
+    ctx.font = "bold 8px Arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffb6c1";
+    ctx.shadowColor = "#ff69b4";
+    ctx.shadowBlur = 7;
+
+    ctx.fillText("I love you", x, y);
+  }
+
+  ctx.restore();
+  requestAnimationFrame(animate);
+}
+
+document.getElementById("start").addEventListener("click", () => {
+  if (running) return;
+
+  running = true;
+  startTime = performance.now();
+
+  document.getElementById("start").style.display = "none";
+
+  const player = document.getElementById("player");
+
+  player.style.display = "block";
+
+  player.src =
+    "https://www.youtube.com/embed/O-aavAlSYgc?autoplay=1&playsinline=1";
+
+  requestAnimationFrame(animate);
+});
+</script>
+
+</body>
+</html>
